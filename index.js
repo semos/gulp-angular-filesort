@@ -9,11 +9,12 @@ var PluginError = gutil.PluginError;
 var PLUGIN_NAME = 'gulp-angular-filesort';
 var ANGULAR_MODULE = 'ng';
 
-module.exports = function angularFilesort() {
+module.exports = function angularFilesort(options) {
   var files = [];
   var ngModules = {};
   var toSort = [];
-
+  options = options || {};
+  
   function transformFunction(file, encoding, next) {
 
     // Fail on empty files
@@ -34,8 +35,14 @@ module.exports = function angularFilesort() {
     try {
       deps = ngDep(file.contents);
     } catch (err) {
-      this.emit('error', new PluginError(PLUGIN_NAME, 'Error in parsing: "' + file.relative + '", ' + err.message));
+      if (options.reportErrors === false) {
+        gutil.log(gutil.colors.red('Error in parsing: "' + file.relative + '", ' + err.message));
+		    gutil.beep();
       return;
+      } else {
+        this.emit('error', new PluginError(PLUGIN_NAME, 'Error in parsing: "' + file.relative + '", ' + err.message));
+        return;
+      }
     }
 
     if (deps.modules) {
