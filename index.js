@@ -37,8 +37,9 @@ module.exports = function angularFilesort(options) {
     } catch (err) {
       if (options.reportErrors === false) {
         gutil.log(gutil.colors.red('Error in parsing: "' + file.relative + '", ' + err.message));
-		    gutil.beep();
-      return;
+        gutil.beep();
+        next();
+        return;
       } else {
         this.emit('error', new PluginError(PLUGIN_NAME, 'Error in parsing: "' + file.relative + '", ' + err.message));
         return;
